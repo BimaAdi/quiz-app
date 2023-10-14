@@ -18,16 +18,16 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = cookies();
-  const token = cookieStore.get("auth_session");
-  if (!token) {
-    redirect("/login");
-  }
+  // const cookieStore = cookies();
+  // const token = cookieStore.get("auth_session");
+  // if (!token) {
+  //   redirect("/login");
+  // }
 
-  const authRequest = auth.handleRequest("GET", context);
-  const session = await authRequest.validate();
-  if (!session) {
-    redirect("/login")
-  }
+  // const authRequest = auth.handleRequest("GET", context);
+  // const session = await authRequest.validate();
+  // if (!session) {
+  //   redirect("/login")
+  // }
   return <DashboardLayout>{children}</DashboardLayout>;
 }
