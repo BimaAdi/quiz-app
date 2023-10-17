@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { AiOutlinePlus } from "react-icons/ai";
 
 export default function QuizCard({
@@ -10,10 +11,12 @@ export default function QuizCard({
   title?: string;
   onClick?: () => void;
 }) {
+  const router = useRouter();
+
   if (type === "add") {
     return (
       <div
-        onClick={() => onClick()}
+        onClick={() => router.push("/app/create")}
         className="grid place-items-center min-w-[300px] min-h-[200px] p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 hover:cursor-pointer"
       >
         <AiOutlinePlus

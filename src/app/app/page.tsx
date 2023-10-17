@@ -12,7 +12,10 @@ export default function AppPage() {
         <QuizCard type="publish" title="Algebra 3" />
         <QuizCard type="publish" title="Algebra 2" />
         <QuizCard type="publish" title="Algrebra 1" />
-        <QuizCard type="finish" title="12345678901234567890 12345678901234567890 12345678901234567890" />
+        <QuizCard
+          type="finish"
+          title="12345678901234567890 12345678901234567890 12345678901234567890"
+        />
         <QuizCard type="finish" title="Information and Technology" />
         <QuizCard type="add" />
       </div>

@@ -15,67 +15,10 @@ export type QuizType = {
   onQuestionChange: (quiz_id: string, value: string) => void;
   onAnswerChange: (quiz_id: string, answer_id: string, value: string) => void;
   onCheckedClick: (quiz_id: string, answer_id: string) => void;
+  onDeleteClick: (quiz_id: string) => void;
 };
 
 export default function QuizEditorItem(props: QuizType) {
-  // const [quiz, setQuiz] = useState<QuizType>({
-  //   quiz_id: "1",
-  //   no: "1",
-  //   question: "Who is the first president of america?",
-  //   answer: [
-  //     {
-  //       answer_id: "a",
-  //       tag: "A",
-  //       answer: "Joko Widodo",
-  //       isCorrectAnswer: false,
-  //     },
-  //     {
-  //       answer_id: "b",
-  //       tag: "B",
-  //       answer: "Kim Jong Un",
-  //       isCorrectAnswer: false,
-  //     },
-  //     {
-  //       answer_id: "c",
-  //       tag: "C",
-  //       answer: "Barack Obama",
-  //       isCorrectAnswer: false,
-  //     },
-  //     {
-  //       answer_id: "d",
-  //       tag: "D",
-  //       answer: "Abraham lincoln",
-  //       isCorrectAnswer: true,
-  //     },
-  //   ],
-  // });
-
-  // const onQuestionChange = (value: string) => {
-  //   setQuiz({ ...quiz, question: value });
-  // };
-
-  // const onAnswerChange = (id: string, value: string) => {
-  //   setQuiz({
-  //     ...quiz,
-  //     answer: quiz.answer.map((x) => {
-  //       if (x.id === id) {
-  //         x.answer = value;
-  //       }
-  //       return x;
-  //     }),
-  //   });
-  // };
-
-  // const onCheckedClick = (id: string) => {
-  //   setQuiz({
-  //     ...quiz,
-  //     answer: quiz.answer.map((x) => {
-  //       x.isCorrectAnswer = x.id === id;
-  //       return x;
-  //     }),
-  //   });
-  // };
-
   return (
     <div className="flex flex-col gap-2 bg-white border border-gray-200 rounded-lg shadow py-6">
       <div className="px-6 pb-3 flex gap-2">
@@ -83,7 +26,9 @@ export default function QuizEditorItem(props: QuizType) {
         <textarea
           className="w-full block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
           value={props.question}
-          onChange={(e) => props.onQuestionChange(props.quiz_id, e.target.value)}
+          onChange={(e) =>
+            props.onQuestionChange(props.quiz_id, e.target.value)
+          }
         ></textarea>
       </div>
       {props.answer.map((x) => (
@@ -96,7 +41,9 @@ export default function QuizEditorItem(props: QuizType) {
             <input
               type="text"
               value={x.answer}
-              onChange={(e) => props.onAnswerChange(props.quiz_id, x.answer_id, e.target.value)}
+              onChange={(e) =>
+                props.onAnswerChange(props.quiz_id, x.answer_id, e.target.value)
+              }
               className="w-full p-1.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
@@ -110,6 +57,15 @@ export default function QuizEditorItem(props: QuizType) {
           />
         </div>
       ))}
+      <div className="px-6 py-3">
+        <button
+          type="button"
+          onClick={() => props.onDeleteClick(props.quiz_id)}
+          className="focus:outline-none w-20 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
+        >
+          Delete
+        </button>
+      </div>
     </div>
   );
 }

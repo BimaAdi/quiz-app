@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import QuizEditorItem from "./QuizEditorItem";
+import { AiOutlinePlus } from "react-icons/ai";
 
 export type QuizListType = {
   quiz_id: string;
@@ -73,20 +74,43 @@ export default function QuizEditorList({
     );
   };
 
+  const onDeleteClick = (quiz_id: string) => {
+    setAllQuiz(allQuiz.filter((quiz) => quiz.quiz_id !== quiz_id));
+  };
+
+  const addQuiz = () => {
+    // setAllQuiz()
+  }
+
   return (
-    <>
+    <div>
       {allQuiz.map((x) => (
-        <QuizEditorItem
-          key={x.quiz_id}
-          quiz_id={x.quiz_id}
-          no={x.no}
-          question={x.question}
-          answer={x.answer}
-          onQuestionChange={onQuestionChange}
-          onAnswerChange={onAnswerChange}
-          onCheckedClick={onCheckedClick}
-        />
+        <div key={x.quiz_id} className="my-2">
+          <QuizEditorItem
+            quiz_id={x.quiz_id}
+            no={x.no}
+            question={x.question}
+            answer={x.answer}
+            onQuestionChange={onQuestionChange}
+            onAnswerChange={onAnswerChange}
+            onCheckedClick={onCheckedClick}
+            onDeleteClick={onDeleteClick}
+          />
+        </div>
       ))}
-    </>
+      <div className="my-2">
+        <div 
+          onClick={() => addQuiz()}
+          className="grid place-items-center bg-white border border-gray-200 rounded-lg shadow py-6 hover:cursor-pointer"
+        >
+          <AiOutlinePlus
+            style={{
+              width: "50px",
+              height: "50px",
+            }}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
