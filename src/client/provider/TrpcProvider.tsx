@@ -15,7 +15,7 @@ export default function TrpcProvider({ children }: { children: ReactNode }) {
     trpc.createClient({
       links: [
         httpBatchLink({
-          url: 'api/trpc',
+          url: 'http://localhost:3000/api/trpc',
           async headers() {
             return {
               authorization: getAuthToken()

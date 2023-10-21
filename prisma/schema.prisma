@@ -17,6 +17,7 @@ model User {
 
   auth_session Session[]
   key          Key[]
+  Quiz         Quiz[]
 }
 
 model Session {
@@ -36,4 +37,38 @@ model Key {
   user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
+}
+
+model Quiz {
+  id           String         @id @db.Uuid
+  name         String
+  user_id      String
+  user         User           @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @default(now())
+  QuizQuestion QuizQuestion[]
+
+  @@index([user_id])
+}
+
+model QuizQuestion {
+  id                 String               @id @db.Uuid
+  number             Int
+  question           String
+  correct_answer     String
+  quiz_id            String               @db.Uuid
+  quiz               Quiz                 @relation(references: [id], fields: [quiz_id], onDelete: Cascade)
+  QuizQuestionChoice QuizQuestionChoice[]
+
+  @@index([quiz_id])
+}
+
+model QuizQuestionChoice {
+  id               String       @id @db.Uuid
+  choice           String
+  answer           String
+  quiz_question_id String       @db.Uuid
+  quiz_question    QuizQuestion @relation(references: [id], fields: [quiz_question_id], onDelete: Cascade)
+
+  @@index([quiz_question_id])
 }
