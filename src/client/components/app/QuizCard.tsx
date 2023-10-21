@@ -3,13 +3,13 @@ import { useRouter } from "next/navigation";
 import { AiOutlinePlus } from "react-icons/ai";
 
 export default function QuizCard({
+  id = "",
   type,
   title = "",
-  onClick = () => {},
 }: {
+  id?: string,
   type: "finish" | "publish" | "draft" | "add";
   title?: string;
-  onClick?: () => void;
 }) {
   const router = useRouter();
 
@@ -31,7 +31,9 @@ export default function QuizCard({
 
   return (
     <div
-      onClick={() => onClick()}
+      onClick={() => {
+        router.push(`/app/${id}/edit`)
+      }}
       className="flex flex-col justify-between min-w-[300px] min-h-[200px] p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 hover:cursor-pointer"
     >
       <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
