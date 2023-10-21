@@ -20,7 +20,7 @@ export type QuizListType = {
   }[];
 };
 
-export default function QuizEditorList({
+export default function QuizEditorListCreate({
   listQuiz,
 }: {
   listQuiz: QuizListType[];

@@ -1,9 +1,9 @@
-import QuizEditorList from "@/client/components/quiz/QuizEditorList";
+import QuizEditorListCreate from "@/client/components/quiz/QuizEditorListCreate";
 
 export default function AppCreatePage() {
   return (
     <div className="max-w-[1300px] mx-auto flex flex-col gap-4">
-      <QuizEditorList
+      <QuizEditorListCreate
         listQuiz={[]}
       />
     </div>

@@ -11,7 +11,7 @@ export default async function AppPage() {
   const { user } = await getUserFromLuciaSession(luciaSession);
   const allQuiz = await appRouter
     .createCaller({ user: user, session: null })
-    .quiz.getAllQuiz();
+    .quiz.getAllQuizUser();
 
   return (
     <div className="max-w-[1300px] mx-auto">

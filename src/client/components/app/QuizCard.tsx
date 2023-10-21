@@ -32,7 +32,9 @@ export default function QuizCard({
   return (
     <div
       onClick={() => {
-        router.push(`/app/${id}/edit`)
+        // use window.location instead to prevent cache
+        // router.push(`/app/${id}/edit`) 
+        window.location.replace(`${process.env.NEXT_PUBLIC_BASE_URL}/app/${id}/edit`);
       }}
       className="flex flex-col justify-between min-w-[300px] min-h-[200px] p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 hover:cursor-pointer"
     >
