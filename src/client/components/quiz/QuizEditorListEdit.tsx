@@ -6,6 +6,7 @@ import Link from "next/link";
 import { v4 as uuidv4 } from "uuid";
 import QuizEditorItem from "./QuizEditorItem";
 import { trpc } from "@/client/utils/trpc";
+import { useRouter } from "next/navigation";
 
 export type QuizListType = {
   quiz_id: string;
@@ -28,14 +29,14 @@ export default function QuizEditorListEdit({
   name: string;
   listQuiz: QuizListType[];
 }) {
+  const router = useRouter();
   const [quizName, setQuizName] = useState<string>(name);
   const [allQuiz, setAllQuiz] = useState<QuizListType[]>(listQuiz);
 
   const editQuizMutation = trpc.quiz.editQuiz.useMutation({
     onSuccess: () => {
-      // use window.location instead to prevent cache
-      // router.push("/app", {});
-      window.location.replace(`${process.env.NEXT_PUBLIC_BASE_URL}/app`);
+      router.push("/app");
+      router.refresh();
     },
   });
 

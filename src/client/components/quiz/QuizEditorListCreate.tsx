@@ -33,6 +33,7 @@ export default function QuizEditorListCreate({
   const createQuizMutation = trpc.quiz.createQuiz.useMutation({
     onSuccess: () => {
       router.push("/app");
+      router.refresh();
     },
   });
 

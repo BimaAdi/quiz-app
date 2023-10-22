@@ -7,7 +7,7 @@ export default function QuizCard({
   type,
   title = "",
 }: {
-  id?: string,
+  id?: string;
   type: "finish" | "publish" | "draft" | "add";
   title?: string;
 }) {
@@ -32,9 +32,8 @@ export default function QuizCard({
   return (
     <div
       onClick={() => {
-        // use window.location instead to prevent cache
-        // router.push(`/app/${id}/edit`) 
-        window.location.replace(`${process.env.NEXT_PUBLIC_BASE_URL}/app/${id}/edit`);
+        router.push(`/app/${id}/edit`);
+        router.refresh();
       }}
       className="flex flex-col justify-between min-w-[300px] min-h-[200px] p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 hover:cursor-pointer"
     >

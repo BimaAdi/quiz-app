@@ -5,6 +5,8 @@ import { auth } from "@/server/auth/lucia";
 import { getUserFromLuciaSession } from "@/server/utils/getUser";
 import { appRouter } from "@/server/router";
 
+export const dynamic = "force-dynamic";
+
 export default async function AppPage() {
   const authRequest = auth.handleRequest("GET", context);
   const luciaSession = await authRequest.validate();

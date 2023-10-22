@@ -2,6 +2,10 @@ import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
 import { protectedProcedure, router } from "@/server/utils/trpcRouter";
 import { prisma } from "@/server/db/prisma";
+import {
+  getAllQuizUserService,
+  getDetailUserService,
+} from "@/server/service/quiz";
 
 const generateChoice = (idx: number): string => {
   if (idx === 0) {
@@ -17,36 +21,13 @@ const generateChoice = (idx: number): string => {
 
 export const quizRouter = router({
   getAllQuizUser: protectedProcedure.query(async ({ ctx }) => {
-    const data = await prisma.quiz.findMany({
-      where: {
-        user_id: ctx.user.id,
-      },
-      orderBy: [
-        {
-          updated_at: "desc",
-        },
-      ],
-    });
-
+    const data = await getAllQuizUserService(ctx.user);
     return data;
   }),
   getDetailQuizForEdit: protectedProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
-      const data = await prisma.quiz.findFirst({
-        include: {
-          QuizQuestion: {
-            include: {
-              QuizQuestionChoice: true,
-            },
-          },
-        },
-        where: {
-          id: input,
-          user_id: ctx.user.id,
-        },
-      });
-
+      const data = await getDetailUserService(input, ctx.user);
       return data;
     }),
   createQuiz: protectedProcedure
