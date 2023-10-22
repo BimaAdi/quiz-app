@@ -32,12 +32,32 @@ export default function QuizEditorListEdit({
   const router = useRouter();
   const [quizName, setQuizName] = useState<string>(name);
   const [allQuiz, setAllQuiz] = useState<QuizListType[]>(listQuiz);
+  const [buttonDisable, setButtonDisable] = useState<boolean>(false);
 
   const editQuizMutation = trpc.quiz.editQuiz.useMutation({
+    onMutate: () => {
+      setButtonDisable(true);
+    },
     onSuccess: () => {
       router.push("/app");
       router.refresh();
     },
+    onError: () => {
+      setButtonDisable(false);
+    }
+  });
+
+  const deleteQuizMutation = trpc.quiz.deleteQuiz.useMutation({
+    onMutate: () => {
+      setButtonDisable(true);
+    },
+    onSuccess: () => {
+      router.push("/app");
+      router.refresh();
+    },
+    onError: () => {
+      setButtonDisable(false);
+    }
   });
 
   const onQuestionChange = (quiz_id: string, value: string) => {
@@ -156,6 +176,10 @@ export default function QuizEditorListEdit({
     });
   };
 
+  const onDeleteQuiz = () => {
+    deleteQuizMutation.mutate(id);
+  };
+
   return (
     <div>
       {/* quiz bar */}
@@ -174,12 +198,15 @@ export default function QuizEditorListEdit({
         <button
           type="button"
           onClick={onEditQuiz}
+          disabled={buttonDisable}
           className="w-20 focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5"
         >
           Edit
         </button>
         <button
           type="button"
+          onClick={onDeleteQuiz}
+          disabled={buttonDisable}
           className="w-20 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
         >
           Delete

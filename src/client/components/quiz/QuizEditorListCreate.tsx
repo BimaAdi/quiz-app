@@ -27,13 +27,20 @@ export default function QuizEditorListCreate({
 }) {
   const [quizName, setQuizName] = useState<string>("");
   const [allQuiz, setAllQuiz] = useState<QuizListType[]>(listQuiz);
+  const [buttonDisable, setButtonDisable] = useState<boolean>(false);
 
   const router = useRouter();
 
   const createQuizMutation = trpc.quiz.createQuiz.useMutation({
+    onMutate: () => {
+      setButtonDisable(true);
+    },
     onSuccess: () => {
       router.push("/app");
       router.refresh();
+    },
+    onError: () => {
+      setButtonDisable(false);
     },
   });
 
@@ -170,12 +177,18 @@ export default function QuizEditorListCreate({
         <button
           type="button"
           onClick={onSaveQuiz}
+          disabled={buttonDisable}
           className="w-20 focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
         >
           Save
         </button>
         <button
           type="button"
+          onClick={() => {
+            router.push("/app");
+            router.refresh();
+          }}
+          disabled={buttonDisable}
           className="w-20 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
         >
           Delete

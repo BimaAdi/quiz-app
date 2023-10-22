@@ -1,11 +1,17 @@
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
+import dayjs from "dayjs";
+import DayJSUtc from 'dayjs/plugin/utc'
+import DayJsTimezone from "dayjs/plugin/timezone";
 import { protectedProcedure, router } from "@/server/utils/trpcRouter";
 import { prisma } from "@/server/db/prisma";
 import {
   getAllQuizUserService,
   getDetailUserService,
 } from "@/server/service/quiz";
+
+dayjs.extend(DayJSUtc);
+dayjs.extend(DayJsTimezone);
 
 const generateChoice = (idx: number): string => {
   if (idx === 0) {
@@ -113,6 +119,7 @@ export const quizRouter = router({
       const quiz = await prisma.quiz.findFirst({
         where: {
           id: input.id,
+          user_id: ctx.user.id
         },
       });
       if (!quiz) {
@@ -126,7 +133,7 @@ export const quizRouter = router({
           },
           data: {
             name: input.quizName,
-            // updated_at: Date.now().toString(),
+            updated_at: dayjs().tz("Asia/Jakarta").toISOString(),
           },
         });
 
@@ -163,5 +170,19 @@ export const quizRouter = router({
       });
 
       return quiz_id;
+    }),
+  deleteQuiz: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await prisma.quiz.delete({
+          where: {
+            id: input,
+            user_id: ctx.user.id,
+          },
+        });
+      } catch {
+
+      }
     }),
 });
