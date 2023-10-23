@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:generate": "prisma migrate dev --create-only",
+    "db:migrate": "prisma migrate dev"
   },
   "dependencies": {
     "@lucia-auth/adapter-prisma": "^3.0.2",

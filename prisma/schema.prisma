@@ -44,8 +44,8 @@ model Quiz {
   name         String
   user_id      String
   user         User           @relation(references: [id], fields: [user_id], onDelete: Cascade)
-  created_at   DateTime       @default(now())
-  updated_at   DateTime       @default(now())
+  created_at   DateTime       @default(now()) @db.Timestamptz()
+  updated_at   DateTime       @default(now()) @db.Timestamptz()
   QuizQuestion QuizQuestion[]
 
   @@index([user_id])
