@@ -2,13 +2,15 @@
 import { useRouter } from "next/navigation";
 import { AiOutlinePlus } from "react-icons/ai";
 
+export type quizType = "finish" | "publish" | "draft" | "add";
+
 export default function QuizCard({
   id = "",
   type,
   title = "",
 }: {
   id?: string;
-  type: "finish" | "publish" | "draft" | "add";
+  type: quizType;
   title?: string;
 }) {
   const router = useRouter();

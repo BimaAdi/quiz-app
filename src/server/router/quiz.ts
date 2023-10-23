@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
 import dayjs from "dayjs";
-import DayJSUtc from 'dayjs/plugin/utc'
+import DayJSUtc from "dayjs/plugin/utc";
 import DayJsTimezone from "dayjs/plugin/timezone";
 import { protectedProcedure, router } from "@/server/utils/trpcRouter";
 import { prisma } from "@/server/db/prisma";
 import {
   getAllQuizUserService,
-  getDetailUserService,
+  getDetailQuizUserService,
 } from "@/server/service/quiz";
 
 dayjs.extend(DayJSUtc);
@@ -33,7 +33,7 @@ export const quizRouter = router({
   getDetailQuizForEdit: protectedProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
-      const data = await getDetailUserService(input, ctx.user);
+      const data = await getDetailQuizUserService(input, ctx.user);
       return data;
     }),
   createQuiz: protectedProcedure
@@ -61,6 +61,7 @@ export const quizRouter = router({
       const createdQuiz = await prisma.quiz.create({
         data: {
           id: quiz_id,
+          quiz_status_id: "64703e2a-1198-4f27-a9df-ff84255f8ef5", // Draft
           name: input.quizName,
           user_id: ctx.user.id,
         },
@@ -119,7 +120,7 @@ export const quizRouter = router({
       const quiz = await prisma.quiz.findFirst({
         where: {
           id: input.id,
-          user_id: ctx.user.id
+          user_id: ctx.user.id,
         },
       });
       if (!quiz) {
@@ -181,8 +182,6 @@ export const quizRouter = router({
             user_id: ctx.user.id,
           },
         });
-      } catch {
-
-      }
+      } catch {}
     }),
 });

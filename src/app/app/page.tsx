@@ -1,5 +1,5 @@
 import * as context from "next/headers";
-import QuizCard from "@/client/components/app/QuizCard";
+import QuizCard, { quizType } from "@/client/components/app/QuizCard";
 import SubNavbar from "@/client/components/app/SubNavbar";
 import { auth } from "@/server/auth/lucia";
 import { getUserFromLuciaSession } from "@/server/utils/getUser";
@@ -22,7 +22,7 @@ export default async function AppPage() {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
         {allQuiz.map((quiz) => (
-          <QuizCard key={quiz.id} id={quiz.id} type="draft" title={quiz.name} />
+          <QuizCard key={quiz.id} id={quiz.id} type={quiz.QuizStatus.name as quizType} title={quiz.name} />
         ))}
         <QuizCard type="add" />
       </div>

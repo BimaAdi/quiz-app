@@ -7,6 +7,9 @@ export const getAllQuizUserService = async (user: User | undefined | null) => {
   }
 
   const data = await prisma.quiz.findMany({
+    include: {
+      QuizStatus: true,
+    },
     where: {
       user_id: user.id,
     },
@@ -19,7 +22,7 @@ export const getAllQuizUserService = async (user: User | undefined | null) => {
   return data;
 };
 
-export const getDetailUserService = async (id: string, user: User) => {
+export const getDetailQuizUserService = async (id: string, user: User) => {
   const data = await prisma.quiz.findFirst({
     include: {
       QuizQuestion: {
@@ -27,6 +30,7 @@ export const getDetailUserService = async (id: string, user: User) => {
           QuizQuestionChoice: true,
         },
       },
+      QuizStatus: true,
     },
     where: {
       id: id,
