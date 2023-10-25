@@ -34,7 +34,7 @@ export default function QuizCard({
   return (
     <div
       onClick={() => {
-        router.push(`/app/${id}/edit`);
+        router.push(`/app/${id}/detail`);
         router.refresh();
       }}
       className="flex flex-col justify-between min-w-[300px] min-h-[200px] p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 hover:cursor-pointer"
