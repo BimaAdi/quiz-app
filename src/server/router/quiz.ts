@@ -9,6 +9,7 @@ import {
   getAllQuizUserService,
   getDetailQuizUserService,
 } from "@/server/service/quiz";
+import { TRPCError } from "@trpc/server";
 
 dayjs.extend(DayJSUtc);
 dayjs.extend(DayJsTimezone);
@@ -182,6 +183,48 @@ export const quizRouter = router({
             user_id: ctx.user.id,
           },
         });
-      } catch {}
+      } catch { }
     }),
+  publishQuiz: protectedProcedure.input(z.object({
+    id: z.string(),
+    startDate: z.string().datetime(),
+    endDate: z.string().datetime(),
+  })).mutation(async ({ ctx, input }) => {
+    const quiz = await prisma.quiz.findFirst({
+      where: {
+        id: input.id,
+        user_id: ctx.user.id
+      },
+      include: {
+        QuizStatus: true
+      }
+    })
+
+    if (!quiz) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "quiz not found"
+      })
+    }
+
+    if (quiz.QuizStatus.name !== "draft") {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "quiz already been publish"
+      })
+    }
+
+    await prisma.quiz.update({
+      where: {
+        id: quiz.id
+      },
+      data: {
+        quiz_status_id: "005d2730-e3c8-4ea6-8e0f-c46b3bec2a4e",
+        publish_start_at: input.startDate,
+        publish_end_at: input.endDate,
+      }
+    })
+
+    return quiz.id
+  })
 });
