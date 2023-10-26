@@ -52,7 +52,7 @@ export default async function AppEditPage({
         ) : (
           <></>
         )}
-        <Publish />
+        {quiz.QuizStatus.name === "draft" ? <Publish id={params.id} /> : <></>}
       </div>
       {/* table */}
       {/* preview */}

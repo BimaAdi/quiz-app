@@ -184,7 +184,7 @@ export default function QuizEditorListEdit({
     <div>
       {/* quiz bar */}
       <div className="flex gap-2 items-center">
-        <Link className="py-2.5 cursor-pointer" href="/app">
+        <Link className="py-2.5 cursor-pointer" href={`/app/${id}/detail`}>
           &lt;Back
         </Link>
         <input
