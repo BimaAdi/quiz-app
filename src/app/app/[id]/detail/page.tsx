@@ -3,6 +3,7 @@ import { auth } from "@/server/auth/lucia";
 import { appRouter } from "@/server/router";
 import { getUserFromLuciaSession } from "@/server/utils/getUser";
 import Link from "next/link";
+import Draft from "@/client/components/app/detail/Draft";
 import Publish from "@/client/components/app/detail/Publish";
 
 export default async function AppEditPage({
@@ -22,7 +23,7 @@ export default async function AppEditPage({
   }
 
   return (
-    <div>
+    <div className="max-w-[1300px] mx-auto">
       <Link className="py-5 cursor-pointer" href="/app">
         &lt;Back
       </Link>
@@ -52,7 +53,8 @@ export default async function AppEditPage({
         ) : (
           <></>
         )}
-        {quiz.QuizStatus.name === "draft" ? <Publish id={params.id} /> : <></>}
+        {quiz.QuizStatus.name === "draft" ? <Draft id={params.id} /> : <></>}
+        {quiz.QuizStatus.name === "publish" ? <Publish id={params.id} start_at={quiz.publish_start_at as Date} end_at={quiz.publish_end_at as Date} /> : <></>}
       </div>
       {/* table */}
       {/* preview */}
