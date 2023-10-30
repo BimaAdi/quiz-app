@@ -180,27 +180,27 @@ export const quizRouter = router({
         const quiz = await prisma.quiz.findFirst({
           where: {
             id: input,
-            user_id: ctx.user.id
+            user_id: ctx.user.id,
           },
           include: {
-            QuizStatus: true
-          }
-        })
-    
+            QuizStatus: true,
+          },
+        });
+
         if (!quiz) {
           throw new TRPCError({
             code: "NOT_FOUND",
-            message: "quiz not found"
-          })
+            message: "quiz not found",
+          });
         }
-    
+
         if (quiz.QuizStatus.name === "publish") {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "quiz in publish state please finish quiz first before deleting"
-          })
+            message:
+              "quiz in publish state please finish quiz first before deleting",
+          });
         }
-
 
         await prisma.quiz.delete({
           where: {
@@ -208,91 +208,97 @@ export const quizRouter = router({
             user_id: ctx.user.id,
           },
         });
-      } catch { }
+      } catch {}
     }),
-  publishQuiz: protectedProcedure.input(z.object({
-    id: z.string(),
-    startDate: z.string().datetime().optional(),
-    endDate: z.string().datetime().optional(),
-  })).mutation(async ({ ctx, input }) => {
-    const quiz = await prisma.quiz.findFirst({
-      where: {
-        id: input.id,
-        user_id: ctx.user.id
-      },
-      include: {
-        QuizStatus: true
+  publishQuiz: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        startDate: z.string().datetime().optional(),
+        endDate: z.string().datetime().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const quiz = await prisma.quiz.findFirst({
+        where: {
+          id: input.id,
+          user_id: ctx.user.id,
+        },
+        include: {
+          QuizStatus: true,
+        },
+      });
+
+      if (!quiz) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "quiz not found",
+        });
       }
-    })
 
-    if (!quiz) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "quiz not found"
-      })
-    }
-
-    if (quiz.QuizStatus.name !== "draft") {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "quiz already been publish"
-      })
-    }
-
-    await prisma.quiz.update({
-      where: {
-        id: quiz.id
-      },
-      data: {
-        quiz_status_id: "005d2730-e3c8-4ea6-8e0f-c46b3bec2a4e",
-        publish_start_at: input.startDate && null,
-        publish_end_at: input.endDate && null,
+      if (quiz.QuizStatus.name !== "draft") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "quiz already been publish",
+        });
       }
-    })
 
-    return quiz.id
-  }),
-  finishQuiz: protectedProcedure.input(z.string()).mutation(async ({ctx, input}) => {
-    const quiz = await prisma.quiz.findFirst({
-      where: {
-        id: input,
-        user_id: ctx.user.id
-      },
-      include: {
-        QuizStatus: true
+      await prisma.quiz.update({
+        where: {
+          id: quiz.id,
+        },
+        data: {
+          quiz_status_id: "005d2730-e3c8-4ea6-8e0f-c46b3bec2a4e",
+          publish_start_at: input.startDate && null,
+          publish_end_at: input.endDate && null,
+        },
+      });
+
+      return quiz.id;
+    }),
+  finishQuiz: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const quiz = await prisma.quiz.findFirst({
+        where: {
+          id: input,
+          user_id: ctx.user.id,
+        },
+        include: {
+          QuizStatus: true,
+        },
+      });
+
+      if (!quiz) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "quiz not found",
+        });
       }
-    })
 
-    if (!quiz) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "quiz not found"
-      })
-    }
-
-    if (quiz.QuizStatus.name === "finish") {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "quiz already been finish"
-      })
-    }
-
-    if (quiz.QuizStatus.name === "draft") {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "quiz hasn't been publish"
-      })
-    }
-
-    await prisma.quiz.update({
-      where: {
-        id: quiz.id
-      },
-      data: {
-        quiz_status_id: "39391176-4446-45a7-bd33-5a494290f642",
+      if (quiz.QuizStatus.name === "finish") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "quiz already been finish",
+        });
       }
-    })
 
-    return quiz.id
-  })
+      if (quiz.QuizStatus.name === "draft") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "quiz hasn't been publish",
+        });
+      }
+
+      await prisma.quiz.update({
+        where: {
+          id: quiz.id,
+        },
+        data: {
+          quiz_status_id: "39391176-4446-45a7-bd33-5a494290f642",
+        },
+      });
+
+      return quiz.id;
+    })
 });
