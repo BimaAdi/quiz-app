@@ -44,7 +44,7 @@ export default function StartQuiz({
     );
   } else {
     return (
-      <div className="w-full focus:outline-none text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
+      <div className="w-full focus:outline-none text-white text-center bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
         Quiz Finished
       </div>
     );

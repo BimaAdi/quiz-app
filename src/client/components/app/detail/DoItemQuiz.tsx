@@ -1,6 +1,7 @@
 "use client";
-
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { trpc } from "@/client/utils/trpc";
 
 const generateArray = (x: number): number[] => {
   let res = [];
@@ -11,22 +12,93 @@ const generateArray = (x: number): number[] => {
 };
 
 export default function DoQuiz({
+  quiz_id,
+  question_id,
   no,
   numQuestion,
   question,
   choices,
   yourAnswer,
 }: {
+  quiz_id: string;
+  question_id: string;
   no: number;
   numQuestion: number;
   question: string;
   choices: { id: string; tag: string; answer: string }[];
   yourAnswer: string | null;
 }) {
+  const router = useRouter();
   const [choicesState] = useState<typeof choices>(choices);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(
     yourAnswer
   );
+
+  const onClickPrevMutation = trpc.doQuiz.answerQuestion.useMutation({
+    onSuccess: () => {
+      router.push(`/app/${quiz_id}/${no - 1}`);
+      router.refresh();
+    },
+  });
+
+  const onClickNextMutation = trpc.doQuiz.answerQuestion.useMutation({
+    onSuccess: () => {
+      router.push(`/app/${quiz_id}/${no + 1}`);
+      router.refresh();
+    },
+  });
+
+  const finishMutation = trpc.doQuiz.finishQuiz.useMutation({
+    onSuccess: () => {
+      router.push(`/app`);
+      router.refresh();
+    },
+  });
+
+  const onClickFinishMutation = trpc.doQuiz.answerQuestion.useMutation({
+    onSuccess: () => {
+      finishMutation.mutate(quiz_id);
+    },
+  });
+
+  const onPrevClick = () => {
+    if (selectedAnswer !== yourAnswer) {
+      onClickPrevMutation.mutate({
+        quiz_id: quiz_id,
+        quiz_question_id: question_id,
+        answer: selectedAnswer,
+      });
+      return;
+    }
+    router.push(`/app/${quiz_id}/${no - 1}`);
+    router.refresh();
+  };
+
+  const onNoChange = (no: number) => {
+    router.push(`/app/${quiz_id}/${no}`);
+    router.refresh();
+  };
+
+  const onNextClick = () => {
+    if (selectedAnswer !== yourAnswer) {
+      onClickNextMutation.mutate({
+        quiz_id: quiz_id,
+        quiz_question_id: question_id,
+        answer: selectedAnswer,
+      });
+      return;
+    }
+    router.push(`/app/${quiz_id}/${no + 1}`);
+    router.refresh();
+  };
+
+  const onFinishClick = () => {
+    onClickFinishMutation.mutate({
+      quiz_id: quiz_id,
+      quiz_question_id: question_id,
+      answer: selectedAnswer,
+    });
+  };
 
   return (
     <div className="flex flex-col gap-2">
@@ -63,7 +135,10 @@ export default function DoQuiz({
       <div className="flex flex-col items-center">
         <div className="inline-flex items-center mt-2 xs:mt-0 gap-1">
           {no !== 1 ? (
-            <button className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-400 rounded-l hover:bg-gray-900">
+            <button
+              onClick={onPrevClick}
+              className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-400 rounded-l hover:bg-gray-900"
+            >
               Prev
             </button>
           ) : (
@@ -71,6 +146,7 @@ export default function DoQuiz({
           )}
           <select
             defaultValue={no}
+            onChange={(e) => onNoChange(parseInt(e.target.value))}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
           >
             {generateArray(numQuestion).map((item) => (
@@ -80,11 +156,17 @@ export default function DoQuiz({
             ))}
           </select>
           {no !== numQuestion ? (
-            <button className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-400 border-0 border-l rounded-r hover:bg-gray-900">
+            <button
+              onClick={onNextClick}
+              className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-400 border-0 border-l rounded-r hover:bg-gray-900"
+            >
               Next
             </button>
           ) : (
-            <button className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-green-500 border-0 border-l rounded-r hover:bg-gray-900">
+            <button
+              onClick={onFinishClick}
+              className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-green-500 border-0 border-l rounded-r hover:bg-gray-900"
+            >
               Finish
             </button>
           )}

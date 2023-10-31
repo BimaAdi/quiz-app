@@ -89,7 +89,7 @@ export const doQuizRouter = router({
         });
       }
 
-      if (!data.finish_at) {
+      if (data.finish_at !== null) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "you already finished this quiz",
@@ -142,6 +142,13 @@ export const doQuizRouter = router({
         });
       }
 
+      if (quizUser.finish_at !== null) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "you already finish this quiz"
+        })
+      }
+
       return {
         id: quiz.id,
         name: quiz.name,
@@ -187,6 +194,7 @@ export const doQuizRouter = router({
             },
           },
           QuizQuestionChoice: true,
+          id: true,
           question: true,
           number: true,
         },
@@ -204,6 +212,7 @@ export const doQuizRouter = router({
 
       return {
         quiz_id: input.quiz_id,
+        question_id: question.id,
         question: question.question,
         number: question.number,
         choices: question.QuizQuestionChoice.map((item) => ({
@@ -222,7 +231,7 @@ export const doQuizRouter = router({
       z.object({
         quiz_id: z.string(),
         quiz_question_id: z.string(),
-        answer: z.string(),
+        answer: z.string().nullable(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -254,7 +263,7 @@ export const doQuizRouter = router({
             user_id: ctx.user.id,
           },
           data: {
-            answer: input.answer,
+            answer: input.answer || "",
           },
         });
         return null;
@@ -266,7 +275,7 @@ export const doQuizRouter = router({
             quiz_id: input.quiz_id,
             quiz_question_id: input.quiz_question_id,
             user_id: ctx.user.id,
-            answer: input.answer,
+            answer: input.answer || "",
           },
         });
 

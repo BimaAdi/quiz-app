@@ -1,4 +1,6 @@
 import * as context from "next/headers";
+import { redirect } from "next/navigation";
+import { TRPCError } from "@trpc/server";
 import { auth } from "@/server/auth/lucia";
 import { appRouter } from "@/server/router";
 import { getUserFromLuciaSession } from "@/server/utils/getUser";
@@ -24,24 +26,41 @@ export default async function AppDoQuizPage({
   const authRequest = auth.handleRequest("GET", context);
   const luciaSession = await authRequest.validate();
   const { user } = await getUserFromLuciaSession(luciaSession);
-  const doQuiz = await appRouter
-    .createCaller({ user: user, session: null })
-    .doQuiz.getQuizInfo({ quiz_id: params.id });
+  let doQuiz = null;
+  try {
+    doQuiz = await appRouter
+      .createCaller({ user: user, session: null })
+      .doQuiz.getQuizInfo({ quiz_id: params.id });
+  } catch (e) {
+    if (e instanceof TRPCError) {
+      if (e.code === "FORBIDDEN" || e.code === "BAD_REQUEST") {
+        return redirect(`/app/${params.id}`);
+      }
+    }
+    return <div>Something wrong with server</div>;
+  }
 
-  const question = await appRouter
-    .createCaller({ user: user, session: null })
-    .doQuiz.getQuestion({
-      quiz_id: params.id,
-      number: parseInt(params.no),
-    });
+  let question = null;
+  try {
+    question = await appRouter
+      .createCaller({ user: user, session: null })
+      .doQuiz.getQuestion({
+        quiz_id: params.id,
+        number: parseInt(params.no),
+      });
+  } catch {
+    question = null;
+  }
 
   if (!doQuiz || !question) {
-    return <div>not found</div>;
+    return redirect(`/app/${params.id}`);
   }
 
   return (
     <div className="max-w-[1300px] mx-auto">
       <DoItemQuiz
+        quiz_id={params.id}
+        question_id={question.question_id}
         no={question.number}
         numQuestion={doQuiz.num_question}
         question={question.question}
