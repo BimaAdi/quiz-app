@@ -29,7 +29,13 @@ const generateChoice = (idx: number): string => {
 export const quizRouter = router({
   getAllQuizUser: protectedProcedure.query(async ({ ctx }) => {
     const data = await getAllQuizUserService(ctx.user);
-    return data;
+    return data.map((x) => ({
+      ...x,
+      publish_start_at: x.publish_start_at?.toISOString(),
+      publish_end_at: x.publish_end_at?.toISOString(),
+      created_at: x.created_at.toISOString(),
+      updated_at: x.updated_at.toISOString(),
+    }));
   }),
   getDetailQuizForEdit: protectedProcedure
     .input(z.string())
@@ -300,5 +306,5 @@ export const quizRouter = router({
       });
 
       return quiz.id;
-    })
+    }),
 });

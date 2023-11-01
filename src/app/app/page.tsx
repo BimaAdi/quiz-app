@@ -1,9 +1,8 @@
 import * as context from "next/headers";
-import QuizCard, { quizType } from "@/client/components/app/QuizCard";
-import SubNavbar from "@/client/components/app/SubNavbar";
 import { auth } from "@/server/auth/lucia";
 import { getUserFromLuciaSession } from "@/server/utils/getUser";
 import { appRouter } from "@/server/router";
+import AllQuiz from "@/client/components/app/AllQuiz";
 
 export const dynamic = "force-dynamic";
 
@@ -11,21 +10,15 @@ export default async function AppPage() {
   const authRequest = auth.handleRequest("GET", context);
   const luciaSession = await authRequest.validate();
   const { user } = await getUserFromLuciaSession(luciaSession);
-  const allQuiz = await appRouter
+  const allCreatedQuiz = await appRouter
     .createCaller({ user: user, session: null })
     .quiz.getAllQuizUser();
 
+  const allSolveQuiz = await appRouter.createCaller({user: user, session: null}).solveQuiz.getListSolveQuiz();
+
   return (
     <div className="max-w-[1300px] mx-auto">
-      <div className="mb-2">
-        <SubNavbar />
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-        {allQuiz.map((quiz) => (
-          <QuizCard key={quiz.id} id={quiz.id} type={quiz.QuizStatus.name as quizType} title={quiz.name} />
-        ))}
-        <QuizCard type="add" />
-      </div>
+      <AllQuiz allCreatedQuiz={allCreatedQuiz} allSolveQuiz={allSolveQuiz} />
     </div>
   );
 }

@@ -16,10 +16,7 @@ export const doQuizRouter = router({
         },
       });
       if (!quiz) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "quiz not found",
-        });
+        return null;
       }
 
       const userQuizStatus = await prisma.doQuiz.findFirst({
@@ -145,8 +142,8 @@ export const doQuizRouter = router({
       if (quizUser.finish_at !== null) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "you already finish this quiz"
-        })
+          message: "you already finish this quiz",
+        });
       }
 
       return {

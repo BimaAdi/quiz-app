@@ -1,35 +1,16 @@
 "use client";
-
-import { trpc } from "@/client/utils/trpc";
 import { useRouter } from "next/navigation";
 
-export default function StartQuiz({
+export default function SolveQuiz({
   id,
   status,
 }: {
   id: string;
-  status: "start" | "continue" | "finish";
+  status: "continue" | "finish";
 }) {
   const router = useRouter();
 
-  const startQuizMutation = trpc.doQuiz.startQuiz.useMutation({
-    onSuccess: () => {
-      router.push(`/app/${id}/1`);
-      router.refresh();
-    },
-  });
-
-  if (status === "start") {
-    return (
-      <button
-        type="button"
-        onClick={() => startQuizMutation.mutate(id)}
-        className="w-full focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
-      >
-        Start Quiz
-      </button>
-    );
-  } else if (status === "continue") {
+  if (status === "continue") {
     return (
       <button
         type="button"

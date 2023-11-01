@@ -1,10 +1,26 @@
-export default function SubNavbar() {
+"use client";
+
+export default function SubNavbar({ page, onChange }: { page: "created" | "solve", onChange: (x: typeof page) => void }) {
   return (
     <div className="flex gap-4 text-lg">
-      <div className="border-b-2 border-blue-950 border-solid hover:cursor-pointer">
+      <div
+        className={
+          page === "created"
+            ? "border-b-2 border-solid hover:cursor-pointer border-blue-950"
+            : "border-b-2 border-solid hover:cursor-pointer"
+        }
+        onClick={() => onChange("created")}
+      >
         Your Quiz
       </div>
-      <div className="border-b-1 border-black border-solid hover:cursor-pointer">
+      <div
+        className={
+          page === "solve"
+            ? "border-b-2 border-solid hover:cursor-pointer border-blue-950"
+            : "border-b-2 border-solid hover:cursor-pointer"
+        }
+        onClick={() => onChange("solve")}
+      >
         Solve Quiz
       </div>
     </div>
