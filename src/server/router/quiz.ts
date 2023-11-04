@@ -6,6 +6,7 @@ import DayJsTimezone from "dayjs/plugin/timezone";
 import { protectedProcedure, router } from "@/server/utils/trpcRouter";
 import { prisma } from "@/server/db/prisma";
 import {
+  calculateScoreAll,
   getAllQuizUserService,
   getDetailQuizUserService,
 } from "@/server/service/quiz";
@@ -296,14 +297,26 @@ export const quizRouter = router({
         });
       }
 
-      await prisma.quiz.update({
-        where: {
-          id: quiz.id,
-        },
-        data: {
-          quiz_status_id: "39391176-4446-45a7-bd33-5a494290f642",
-        },
-      });
+      await prisma.$transaction(async (tx) => {
+        await calculateScoreAll(tx, quiz.id);
+        await tx.quiz.update({
+          where: {
+            id: quiz.id,
+          },
+          data: {
+            quiz_status_id: "39391176-4446-45a7-bd33-5a494290f642",
+          },
+        });
+        await tx.doQuiz.updateMany({
+          where: {
+            quiz_id: quiz.id
+          },
+          data: {
+            finish_at: dayjs().tz("Asia/Jakarta").toISOString(),
+          }
+        })
+      })
+
 
       return quiz.id;
     }),

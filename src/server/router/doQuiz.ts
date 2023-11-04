@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { prisma } from "../db/prisma";
 import { protectedProcedure, router } from "../utils/trpcRouter";
 import dayjs from "../utils/dayjs";
+import { calculateScore } from "../service/doQuiz";
 
 export const doQuizRouter = router({
   getDetailQuizForQuiz: protectedProcedure
@@ -93,13 +94,17 @@ export const doQuizRouter = router({
         });
       }
 
-      await prisma.doQuiz.update({
-        where: {
-          id: data.id,
-        },
-        data: {
-          finish_at: dayjs().tz("Asia/Jakarta").toISOString(),
-        },
+      await prisma.$transaction(async (tx) => {
+        await tx.doQuiz.update({
+          where: {
+            id: data.id,
+          },
+          data: {
+            finish_at: dayjs().tz("Asia/Jakarta").toISOString(),
+          },
+        });
+
+        await calculateScore(tx, data.id);
       });
 
       return null;
